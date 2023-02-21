@@ -16,4 +16,8 @@ describe("server test",()=>{
 
   });
 
+  after(() => {
+    server.close();
+    process.exit();
+  });
 });
