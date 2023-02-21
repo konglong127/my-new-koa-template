@@ -7,6 +7,7 @@ import cors from "@koa/cors";
 import range from "koa-range";
 import bodyParser from "koa-bodyparser";
 import koaStatic from "koa-static";
+import compress from "koa-compress";
 import { RateLimit } from "koa2-ratelimit";
 import path from "path";
 import index from "./routes/index";
@@ -29,6 +30,16 @@ app.use(cors());
 app.use(bodyParser());
 app.use(json());
 app.use(logger());
+app.use(compress({
+  threshold: 2048,
+  gzip: {
+    flush: require('zlib').constants.Z_SYNC_FLUSH
+  },
+  deflate: {
+    flush: require('zlib').constants.Z_SYNC_FLUSH,
+  },
+  br: false
+}));
 app.use(range);
 app.use(koaStatic(path.join(__dirname, "./public")));
 
