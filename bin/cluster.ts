@@ -1,13 +1,8 @@
 import cluster, { Worker } from "cluster";
 import process from "process";
-// import http2 from "http2";
-// import https from "https";
 import http from "http";
-// import fs from "fs";
-// import path from "path";
 import { environment, server } from "../config";
 import koa from "koa";
-// import app from "../app";
 
 // 子进程接收的信息
 type msg = {
@@ -20,17 +15,6 @@ type aWorker = { worker: Worker; info: { port: string; type: string } };
 const workers: Array<aWorker> = [];
 // 进程重启次数统计，防止死循环
 var restart: Array<number> = [];
-// http2证书
-// const options: { key: string; cert: string } = {
-//   key: fs.readFileSync(
-//     path.resolve(__dirname, "../utils/keys/private.pem"),
-//     "utf-8",
-//   ),
-//   cert: fs.readFileSync(
-//     path.resolve(__dirname, "../utils/keys/file.crt"),
-//     "utf-8",
-//   ),
-// };
 
 // 创建进程函数
 async function Cluster() {
@@ -72,8 +56,6 @@ async function Cluster() {
     process.on("message", (data: msg) => {
       let { info, pid } = data;
 
-      // const server = http2.createSecureServer(options, app.callback());
-      // const server = https.createServer(options, app.callback());
       const app: koa<koa.DefaultState, koa.DefaultContext> = require("../app");
       const server = http.createServer(app.callback());
 
@@ -139,3 +121,21 @@ function clusterRestart(worker: Worker) {
 }
 
 Cluster();
+
+// import http2 from "http2";
+// import https from "https";
+
+// const server = http2.createSecureServer(options, app.callback());
+// const server = https.createServer(options, app.callback());      
+
+// http2证书
+// const options: { key: string; cert: string } = {
+//   key: fs.readFileSync(
+//     path.resolve(__dirname, "../utils/keys/private.pem"),
+//     "utf-8",
+//   ),
+//   cert: fs.readFileSync(
+//     path.resolve(__dirname, "../utils/keys/file.crt"),
+//     "utf-8",
+//   ),
+// };
