@@ -1,12 +1,25 @@
 import app from "../app";
 import debug from "debug";
-import http from "http";
+import http2 from "http2";
+import fs from "fs";
+import path from "path";
 import { server as ServerConfig } from "../config"
 debug("demo:server");
 
-var port = normalizePort(ServerConfig);
+const options: { key: string; cert: string } = {
+  key: fs.readFileSync(
+    path.resolve(__dirname, "../utils/keys/private.pem"),
+    "utf-8",
+  ),
+  cert: fs.readFileSync(
+    path.resolve(__dirname, "../utils/keys/file.crt"),
+    "utf-8",
+  ),
+};
 
-var server = http.createServer(app.callback());
+var server = http2.createSecureServer(options, app.callback());
+
+var port = normalizePort(ServerConfig);
 
 server.listen(port, () => {
   console.log(`127.0.0.1:${port}`);
