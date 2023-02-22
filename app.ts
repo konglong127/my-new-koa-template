@@ -38,7 +38,7 @@ app.use(
   )
 );//静态资源1天缓存
 
-app.use(views(path.join(__dirname, "./views"), { extension: "pug" }));
+app.use(views(path.join(__dirname, "./views"), { extension: "html" }));
 
 app.use(async (ctx, next) => {
   try {

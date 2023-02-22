@@ -9,7 +9,7 @@ export default function RouterMethods(router: Router) {
   
   router
     .get("/", async (ctx, next) => {
-      await ctx.render("index", { title: "Hello Koa 2!" });
+      await ctx.render("index", {});
     })
     .get("/e", async (ctx, next) => {
       process.exit();
