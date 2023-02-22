@@ -31,7 +31,12 @@ app.use(json());
 app.use(logger());
 
 app.use(range);
-app.use(koaStatic(path.join(__dirname, "./public")));
+app.use(
+  koaStatic(
+    path.join(__dirname, "./public"),
+    { maxage: 86400000 }
+  )
+);//静态资源1天缓存
 
 app.use(views(path.join(__dirname, "./views"), { extension: "pug" }));
 
