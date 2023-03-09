@@ -34,7 +34,15 @@ app.use(range);
 app.use(
   koaStatic(
     path.join(__dirname, "./public"),
-    { maxage: 86400000 }
+    {
+      // maxage: 86400000 ,
+      setHeaders: function (res, path, stats) {
+        // res.setHeader('expires', new Date('2023 2 25').toUTCString());
+        res.setHeader('Cache-Control', 'public,max-age=86400000')
+        // res.setHeader('Last-Modified', new Date('2023 2 25').toUTCString())
+        // res.setHeader('Cache-Control', 'no-cache')
+      }
+    }
   )
 );//静态资源1天缓存
 
