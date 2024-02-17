@@ -1,23 +1,25 @@
 import app from "../app";
 import debug from "debug";
-import http2 from "http2";
-import fs from "fs";
-import path from "path";
+// import http2 from "http2";
+import http from "http";
+// import fs from "fs";
+// import path from "path";
 import { server as ServerConfig } from "../config"
 debug("demo:server");
 
-const options: { key: string; cert: string } = {
-  key: fs.readFileSync(
-    path.resolve(__dirname, "../utils/keys/private.pem"),
-    "utf-8",
-  ),
-  cert: fs.readFileSync(
-    path.resolve(__dirname, "../utils/keys/file.crt"),
-    "utf-8",
-  ),
-};
+// const options: { key: string; cert: string } = {
+//   key: fs.readFileSync(
+//     path.resolve(__dirname, "../utils/keys/private.pem"),
+//     "utf-8",
+//   ),
+//   cert: fs.readFileSync(
+//     path.resolve(__dirname, "../utils/keys/file.crt"),
+//     "utf-8",
+//   ),
+// };
 
-var server = http2.createSecureServer(options, app.callback());
+// var server = http2.createSecureServer(options, app.callback());
+var server = http.createServer(app.callback());
 
 var port = normalizePort(ServerConfig);
 

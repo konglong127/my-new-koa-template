@@ -3,17 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "nodemon --exec npm run combine --watch ./ --ext ./*.ts",
-    "combine": "run-s complier serve",
-    "build": "run-s copy complier",
-    "complier": "tsc -p ./",
-    "copy": "ts-node ./utils/CopyDocs/copy.ts",
+    "res": "nodemon --exec npm run combine --watch ./ --ext ./*.ts",
+    "combine": "run-s compile serve",
+    "compile": "tsc -p ./",
     "serve": "node ./dist/bin/www.js",
-    "dev:ts": "nodemon --exec ts-node ./bin/cluster.ts --watch ./ --ext ./*.ts",
-    "www:ts": "nodemon --exec ts-node ./bin/www.ts --watch ./ --ext ./*.ts",
-    "prd:c": "pm2 start ./dist/bin/cluster",
+    "dev": "nodemon --exec ts-node ./src/bin/cluster.ts --watch ./ --ext ./*.ts",
+    "www": "nodemon --exec ts-node ./src/bin/www.ts --watch ./ --ext ./*.ts",
+    "prdc": "pm2 start ./dist/bin/cluster",
     "prd": "pm2 start ./dist/bin/www",
-    "test": "mocha test/*.ts"
+    "test": "mocha src/test/*.ts"
   },
   "mocha": {
     "require": [

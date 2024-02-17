@@ -2,6 +2,9 @@ import path from "path";
 
 export const server = [
   { port: "3000", type: "worker" },
+  // { port: "3000", type: "worker" },
+  // { port: "3000", type: "worker" },
+  // { port: "3000", type: "worker" },
   // { port: "3001", type: "worker" },
   // { port: "3002", type: "agent" },
 ];

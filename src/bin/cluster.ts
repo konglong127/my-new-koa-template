@@ -10,7 +10,7 @@ type msg = {
   info: { port: string; type: string };
 };
 // 一个子进程
-type aWorker = { worker: Worker; info: { port: string; type: string } };
+type aWorker = { pid: number | undefined, worker: Worker; info: { port: string; type: string } };
 // 子进程数组
 const workers: Array<aWorker> = [];
 // 进程重启次数统计，防止死循环
@@ -20,13 +20,15 @@ var restart: Array<number> = [];
 async function Cluster() {
   if (cluster.isPrimary) {
     for (let i = 0; i < server.length; i++) {
-      workers.push({ worker: cluster.fork(), info: server[i] });
+      let worker = cluster.fork();
+      workers.push({ pid: worker.process.pid, worker, info: server[i] });
 
       workers[i].worker.send({
         pid: workers[i].worker.process.pid,
         info: server[i],
       });
     }
+    // console.log(workers);
 
     if (server.length == 0) console.log("no server start!");
 
@@ -52,6 +54,13 @@ async function Cluster() {
 
       if (environment === "dev") console.log(`[dev] 进程数：${workers.length}`);
     });
+
+    // process.on("SIGTERM", () => {
+    //   for (let i in workers) {
+    //     process.kill(Number(workers[i].pid));
+    //   }
+    //   process.exit(0);
+    // });
   } else {
     process.on("message", (data: msg) => {
       let { info, pid } = data;
@@ -70,7 +79,7 @@ async function Cluster() {
       });
 
       process.on("uncaughtException", (err) => {
-        (<any> process).send(pid);
+        (<any>process).send(pid);
       });
     });
   }
@@ -111,7 +120,7 @@ function clusterRestart(worker: Worker) {
     let newWorker = cluster.fork();
     let info = workers[index].info;
 
-    workers.push({ worker: newWorker, info });
+    workers.push({ pid: newWorker.process.pid, worker: newWorker, info });
     newWorker.send({ pid: newWorker.process.pid, info });
 
     workers.splice(index, 1);
@@ -126,7 +135,7 @@ Cluster();
 // import https from "https";
 
 // const server = http2.createSecureServer(options, app.callback());
-// const server = https.createServer(options, app.callback());      
+// const server = https.createServer(options, app.callback());
 
 // http2证书
 // const options: { key: string; cert: string } = {

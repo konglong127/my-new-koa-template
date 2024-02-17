@@ -33,7 +33,7 @@ app.use(logger());
 app.use(range);
 app.use(
   koaStatic(
-    path.join(__dirname, "./public"),
+    path.join(__dirname, "../public"),
     {
       // maxage: 86400000 ,
       setHeaders: function (res, path, stats) {
@@ -46,7 +46,7 @@ app.use(
   )
 );//静态资源1天缓存
 
-app.use(views(path.join(__dirname, "./views"), { extension: "html" }));
+app.use(views(path.join(__dirname, "../views"), { extension: "html" }));
 
 app.use(async (ctx, next) => {
   try {
