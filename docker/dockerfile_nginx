@@ -1,0 +1,25 @@
+FROM nginx:1.25-alpine-slim
+
+RUN apk update && \
+    apk add --no-cache curl && \
+    apk add --no-cache iputils net-tools && \
+    rm -rf /var/cache/apk/*
+
+# 复制nginx配置文件到容器中
+COPY ./docker/nginx/nginx.conf /etc/nginx/conf.d/default.conf
+
+# 复制日志文件到容器中
+COPY ./docker/nginx/log /var/log/nginx
+
+# 复制nginx网站文件到容器中
+COPY ./docker/nginx/html /usr/share/nginx/html
+
+# VOLUME ["/etc/nginx/conf.d/default.conf"]
+# VOLUME ["/var/log/nginx"]
+# VOLUME ["/usr/share/nginx/html"]
+
+# Expose port 80
+EXPOSE 80
+
+# Start Nginx server
+CMD ["nginx", "-g", "daemon off;"]

@@ -2,7 +2,7 @@ import Joi from "joi";
 import { Context, Next, ParameterizedContext } from "koa";
 import Router from "koa-router";
 import fs from "fs";
-import model from "../database/mongoose/index";
+// import model from "../database/mongoose/index";
 
 export const UserApi = {
   UserLoginValidate: async (ctx: Context, next: Next) => {

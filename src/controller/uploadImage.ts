@@ -6,7 +6,7 @@ import {
   ImageCompress,
   UploadFileValidate,
 } from "../utils/UploadFile/index";
-import model from "../database/mongoose/index";
+// import model from "../database/mongoose/index";
 
 export const UploadImage = async (
   ctx: ParameterizedContext<any, Router.IRouterParamContext<any, {}>, any>,

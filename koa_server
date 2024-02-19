@@ -1,0 +1,40 @@
+FROM keymetrics/pm2:18-slim
+
+RUN  mkdir -p /koa_server
+
+WORKDIR /koa_server/
+
+COPY . /koa_server/
+COPY views /koa_server/
+COPY package.json /koa_server/
+
+RUN apt-get update && \
+  apt-get install -y curl && \
+  apt-get install -y iputils-ping net-tools && \
+  apt-get clean
+
+RUN groupadd -r koa && useradd -r -g koa -m koa && \
+  chown -R koa:koa /koa_server/ && \
+  npm cache clean --force && npm i && npm i typescript -g
+
+USER koa
+
+ENV NPM_CONFIG_LOGLEVEL warn
+RUN ls -al -R
+
+# ENV KOA_APP=koa.js
+
+EXPOSE 3000
+# EXPOSE 82
+
+# 健康状态检查
+# HEALTHCHECK --interval=30s --timeout=30s --retries=10 --start-period=2s \
+#   CMD curl -f http://localhost:3000/ || exit 1
+
+RUN npm run compile
+
+# pm2.json不能在运行 导入cluster模块的代码 pm2已经做了
+CMD ["pm2-runtime","start", "/koa_server/docker/pm2.json"]
+# CMD ["node","/koa_server/dist/bin/cluster.js"]
+
+# docker image build -f ./docker/koa_server -t koa_server:1.0.0 .

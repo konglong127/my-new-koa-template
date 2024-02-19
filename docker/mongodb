@@ -1,0 +1,24 @@
+# 使用官方 MongoDB 镜像作为基础镜像
+FROM mongo:latest
+
+# 设置环境变量
+ENV MONGO_INITDB_ROOT_USERNAME=root
+ENV MONGO_INITDB_ROOT_PASSWORD=root
+ENV MONGO_INITDB_DATABASE=test
+
+# 创建存储目录
+# RUN mkdir -p /data/db
+
+# 设置目录所有者为mongodb
+# RUN chown -R mongodb:mongodb /data/db
+
+# 挂载持久化存储卷
+# VOLUME /data/db
+
+# 暴露 MongoDB 默认端口
+EXPOSE 27017
+
+# 启动 MongoDB 服务
+CMD ["mongod", "--auth"]
+# docker run -v my_mongodb_data:/data/db -d -p 27017:27017 --name my_mongodb_container your_mongodb_image
+

@@ -1,0 +1,64 @@
+mongo --port 2700 -u root 
+
+show dbs   //显示当前 MongoDB 服务器上的所有数据库。
+
+use <database>   //切换到指定的数据库。
+
+db   //显示当前正在使用的数据库。
+
+show collections   //显示当前数据库中的所有集合（表）。
+
+db.<collection>.find()   //从指定的集合中检索所有文档。
+
+db.<collection>.findOne()   //从指定的集合中检索一个文档。
+
+db.<collection>.insertOne(<document>)   //将一个文档插入到指定的集合中。
+
+db.<collection>.insertMany(<documents>)   //将多个文档插入到指定的集合中。
+
+db.<collection>.updateOne(<filter>, <update>)   //更新指定集合中满足筛选条件的一个文档。
+
+db.<collection>.updateMany(<filter>, <update>)   //更新指定集合中满足筛选条件的多个文档。
+
+db.<collection>.deleteOne(<filter>)   //删除指定集合中满足筛选条件的一个文档。
+
+db.<collection>.deleteMany(<filter>)   //删除指定集合中满足筛选条件的多个文档。
+
+db.<collection>.countDocuments(<filter>)   //计算指定集合中满足筛选条件的文档数量。
+
+db.<collection>.aggregate(<pipeline>)   //使用聚合管道对指定集合中的文档进行聚合操作。
+
+例子
+// $eq：等于。 $gt：大于。 $lt：小于。 $gte：大于等于。$lte：小于等于。
+// 年龄大于等于18的所有用户,格式化输出
+db.students.find({ age: { $gte: 18 } }).pretty()
+
+// 按年龄降序排序
+db.users.find().sort({ age: -1 });
+
+// 条件查询正则匹配name中含John的所有用户
+db.users.find({ name: { $regex: /John/ } }) 
+
+// 查询users集合中第10个后面10个文档
+db.users.find().skip(10).limit(10)  
+
+// 修改用户名为'John'的用户的年龄为30
+db.users.updateOne( { name: "John" },  { $set: { age: 30 } } ); 
+
+// 删除年龄小于18岁的第一个用户
+db.users.deleteOne( { age: { $lt: 18 } } ); 
+
+// 创建索引，1 表示按升序进行索引排序，-1 表示按降序进行索引排序
+db.users.createIndex({ id: 1 });  
+
+// 筛选条件，计算年龄大于等于18岁的文档数量
+db.users.countDocuments({ age: { $gte: 18 } } ); 
+
+// 年龄大于18，按客性别进行分组，计算总人数，按total升序排序
+db.users.aggregate([
+  { $match: { age: { $gt: 18} } },
+  { $group: { _id: "$sex", total: { $sum: 1 } } },
+  { $sort: { total: 1 } }
+]);
+
+

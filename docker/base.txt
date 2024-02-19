@@ -1,0 +1,182 @@
+docker version
+docker info
+
+容器
+  查看容器运行
+    docker container ls #查看运行的容器
+    docker container ls -a #查看所有容器
+    docker container ps #查看运行的容器
+    docker container ps -a #查看所有容器
+    docker ps #查看运行的容器
+    docker ps -a #查看所有容器
+    docker ps -aq #只查看所有容器id
+
+  运行容器
+    docker container run 镜像名
+    docker container run nginx #会自动下载nginx并运行
+    docker run nginx #会自动下载nginx并运行
+    docker container start containerId #运行已经有容器
+
+  停止删除容器
+    docker container stop nginx #停止运行容器
+    docker container rm containerId #删除容器
+    docker rm containerId #删除容器
+    docker rm -f containerId #强制删除容器
+  
+  转回attech模式
+    docker attach containerId #将 '-d' detach运行的容器转回attach模式
+  
+  查看日志
+    docker container logs containerId #查看容器日志
+
+  进入容器
+    docker exec -it containerId sh #进入容器
+  
+  查看容器进程
+    docker top containerId #查看容器进程
+  
+  清理停止的容器
+    docker system prune -f #清空后台停止运行的容器
+    docker system prune -a #清空没用的镜像
+    docker volume prune -a #清空没有使用的存储数据
+  
+  docker network
+    network类型 -d bridge
+      bridge docker转发
+      host 端口，ip直接使用本机
+      none 创建不带网络的容器
+    
+    docker network ls #查看docker网络列表
+    docker network create -d bridge mybridge #创建一个bridge网络
+    docker network inspect mybridge #查看网络详情
+    docker network connect networkId containerId #把容器连接到网络
+    docker network disconnect networkId containerId #把容器断开连接
+    docker network create -d bridge --gateway 172.200.0.1 --subnet 172.200.0.0/16 mybridge
+    #创建一个bridge网络，并设置ip，容器地址在172.200.0.1基础上递增
+    docker container run -p 80:80 --name n1 --network networkId -d nginx #默认docker0，设置连接mybridge网络
+
+  高级应用
+    docker container stop $(docker container ps -aq) #停止所有容器
+    docker container rm $(docker container ps -aq) #删除所有容器 
+    docker container run -p 80:80 nginx #运行NGINX容器,并把80端口向外映射
+    docker container run -d -p 80:80 nginx #运行NGINX容器,并把80端口向外映射,在后台运行
+    docker container run -it ubuntu sh #创建一个可以交互的ubuntu容器
+    docker container run --name my-container -it ubuntu sh #创建一个可以交互的ubuntu容器,并命名为myubuntu
+    docker container run --publish 80:80 --detach --name myNginx nginx
+    docker container run --rm -it ipinfo ipinfo 8.8.8.8 # 运行容器执ipinfo行命令,运行后删除容器
+    docker container run -d --network mybridge --env REDIS_PASS=abc123 redis:latest --requirepass abc123
+
+镜像
+  查看镜像
+    docker image ls
+  
+  删除镜像
+    docker image rm [镜像id] #如果被使用，要先删除使用镜像的容器，才能删除镜像
+    docker image rm REPOSITORY/TAG 
+
+  查看镜像信息
+    docker image inspect [镜像id]
+    docker image history [镜像id]  #查看镜像构建历史
+
+  拉取镜像
+    docker image pull [镜像名称] #拉取镜像
+    docker pull 镜像名 #拉取镜像简写
+    docker image pull nginx:1.20.0 #拉取镜像简写
+  
+  导出镜像
+    docker image save nginx:1.20.0 -o nginx.image #导出NGINX镜像
+  
+  导入镜像
+    docker image load -i ./nginx.image #导入nginx镜像
+
+  为镜像设置tag
+    docker image tag hello hello2:2.0 #为hello镜像设置tag,hello2与hello为同一个镜像
+
+  根据dockerfile构建镜像（shell把命令写在一个RUN中会节省容器空间）
+    docker image build -t [镜像名称] . #根据当前目录的Dockerfile构建镜像,在当前文件夹下
+    docker image build -t hello:1.0.0 . #根据当前目录的Dockerfile构建镜像,在当前文件夹下
+    docker image build -t hello . #根据当前目录的Dockerfile构建镜像,在当前文件夹下
+    docker image build -f Dockerfile -t info-good . #-f指定Dockerfile文件 -t指定标签
+
+  上传镜像
+    docker login #登录docker
+    docker image push REPOSITORY:TAG #上传镜像
+    docker pull REPOSITORY:TAG #拉取镜像
+  
+Dockerfile
+  FROM ubuntu:20.04 #容器运行环境
+  WORKDIR 路径 #会自动cd到路径下，没有会创建
+  ADD 源文件 目标位置 #添加文件，如何是压缩文件，会自动解压
+  COPY 源文件 目标位置 #复制文件，不会解压 
+  ENV 环境变量名=环境变量值 #设置环境变量,会被保存在容器内,使用env命令查看
+  ARG 环境变量名=环境变量值 #设置环境变量,不会保存在容器内
+  RUN #运行容器时执行的命令,优先级高于CMD
+  CMD ['','',...] #容器执行的命令,docker container run -it 容器名 命令，后面的命令会覆盖CMD
+  ENTRYPOINT ['','',...] #命令一定会被执行
+  EXPOSE 8080 #对外暴露8080端口
+  VOLUME ["/app"] #填写WORKDIR在数组中，会保存数据，-v如何被省略会随机生成volume name
+
+volume数据持久化 
+  查看volume
+    docker volume ls  #查看volume
+
+  查看指定volume
+    docker volume inspect [volume名称]  #查看指定volume
+
+  应用
+    docker container run -d -v 存储名称:存储路径 镜像名
+    docker container run --rm -v text:/app -it p1 sh
+    docker container run -p 3306:3306 --name persist-mysql -e MYSQL_ROOT_PASSWORD=my-secret-root -d -v mysql-data:/var/lib/mysql mysql:5.7
+    
+docker-compose
+  docker compose ls #查看后台运行的容器
+  docker compose up #启动*.yml定义的容器
+  docker compose up -p myproject -f example.yml -d #启动*.yml定义的容器，-p 项目名 -f 指定配置文件，默认docker-compose.yml -d 后台运行
+  docker compose -f koa.yml up -d       
+  docker compose -f koa.yml up -d --build # --build 重新加载修改过的文件，重新构建镜像     
+  docker compose -f koa.yml restart # 重新加载修改过的文件    
+  docker compose -f koa.yml up -d --remove-orphans # 启动服务时移除孤立的容器     
+  docker compose stop #停止docker compose运行的所有容器
+  docker compose rm #删除docker compose运行的所有容器
+  docker compose -f koa.yml up -d --scale koa_node=3#进行水平扩展3个，docker自带负载均衡
+  dokcer system prune -f  # 清理所有停止的容器
+
+docker swarm
+  docker swarm init # 初始化swarm集群
+  docker node ls # 查看swarm集群节点
+  docker swarm leave --force # 离开swarm集群
+  docker swarm init --advertise-addr=192.168.200.10 # 初始化集群，设置访问地址
+  docker swarm join --token sdfsdfsdfsdfsd-dfsdfsdfsdfs 192.168.200.10:2377 # 加入swarm集群
+
+docker service 
+  docker service ls # 查看服务
+  docker service create [options] image [command] [arg...] # 创建服务
+  docker service create --name web nginx:latest # 查看运行Id
+  docker network create -d overlay mynet # 创建网络
+  docker service create --network mynet --name test --replicas 2 nginx:latest # 查看服务运行的容器
+  #创建一个redis服务，设置密码并运行
+  docker service create --network mynet --name redis redis:latest redis-server --requirepass abc123
+  #根据flask-redis镜像创建服务，设置环境变量
+  docker service create --network mynet --name flask --env REDIS_HOST=redis --env REDIS_PASS=abc123 -p 8080:5000 flask-redis:latest
+  #创建mysql服务器
+  docker service create --name mysql-demo --secret mysql_pass --env MYSQL_ROOT_PASSWORD=/run/secrets/mysql_pass
+  docker service ps servieId # 查看服务运行的容器
+  docker service update serviceId --replicas 3 # 更新服务副本数
+  docker service scale serviceId=3 # 更新服务副本数
+  docker service rm serviceId # 删除服务
+  docker service logs serviceId # 查看服务日志
+  docker service logs -f serviceId # 查看服务日志,一直监听log
+
+docker stack # 执行docker-compose.yml 部署多和service
+  docker stack deploy -c docker-compose.yml redis # 部署服务
+  docker stack ls # 查看服务
+  docker stack ps redis # 查看服务运行的容器
+  docker stack rm redis # 删除服务
+  docker stack services redis # 查看服务
+  docker stack deploy -c koa.yml koa_server # stack名字koa_server
+
+docker buildx
+  docker buildx ls # 查看构建环境
+  dokcer buildx create --name mybuilder --use # 创建构建环境
+  docker buildx rm mybuilder # 删除构建环境
+  docker buildx build --push --platform linux/arm/v7,linux/arm64/v8,linux/amd64 -t konglong127/koa-mysql:latest # 构建多环境支持镜像
