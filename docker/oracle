@@ -1,0 +1,24 @@
+FROM scratch
+
+ADD oraclelinux-9-slim-amd64-rootfs.tar.xz /
+
+# overwrite this with 'CMD []' in a dependent Dockerfile
+CMD ["/bin/bash"]
+
+# docker run -d --name oracle-db-container -p 1521:1521 -e ORACLE_SID=ORCLCDB -e ORACLE_PDB=ORCLPDB1 -e ORACLE_PWD=oracle1234 oracle/database:version
+
+# User : kasm_user
+# Password: password
+# docker run --rm -it --shm-size=512m -p 6901:6901 -e VNC_PW=oracle1234 kasmweb/oracle-8-desktop:1.14.0
+# sqlplus hr/password@localhost:1521/orcl
+
+
+
+
+# docker pull ghcr.io/oracle/adb-free:23.10.2.4
+# docker run -d -p 1521:1521 -p 1522:1522 -p 8443:8443 -e WORKLOAD_TYPE='ATP' -e WALLET_PASSWORD='Oracle.123456' -e ADMIN_PASSWORD='Oracle.123456' --cap-add SYS_ADMIN --device /dev/fuse --volume adb_container_volume:/u01/data  --name oracle ghcr.io/oracle/adb-free
+
+# docker run -d -p 1521:1521 -p 1522:1522 -p 8443:8443 -e WORKLOAD_TYPE='ATP' -e WALLET_PASSWORD='Oracle.123456' -e ADMIN_PASSWORD='Oracle.123456' --cap-add SYS_ADMIN --device /dev/fuse --volume adb_container_volume:/oracle_data  --name oracle ghcr.io/oracle/adb-free
+
+# cmd 连接方法
+# sqlplus admin/Oracle.123456@localhost:1521/MY_ATP

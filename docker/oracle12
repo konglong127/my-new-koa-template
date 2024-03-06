@@ -1,0 +1,12 @@
+# 使用 Oracle 官方提供的 Docker 镜像
+FROM store/oracle/database-enterprise:12.2.0.1
+
+# 设置环境变量
+ENV ORACLE_SID=ORCLCDB
+ENV ORACLE_PDB=ORCLPDB1
+ENV ORACLE_PWD=your_password_here
+
+# 创建一个 Oracle 用户
+RUN echo "alter session set \"_ORACLE_SCRIPT\"=true;" >> /docker-entrypoint-initdb.d/init.sql && \
+    echo "CREATE USER your_username IDENTIFIED BY your_password_here;" >> /docker-entrypoint-initdb.d/init.sql && \
+    echo "GRANT CONNECT, RESOURCE, DBA TO your_username;" >> /docker-entrypoint-initdb.d/init.sql

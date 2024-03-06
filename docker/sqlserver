@@ -1,0 +1,27 @@
+# 使用microsoft SQL Server 2019的基础镜像
+FROM mcr.microsoft.com/mssql/server:2019-latest
+
+# 设置环境变量
+# sa用户密码
+ENV ACCEPT_EULA=Y
+ENV MSSQL_SA_PASSWORD=sa.123456
+
+# 设置SQL Server的用户名和密码
+# ENV MSSQL_USER=root
+# ENV MSSQL_PASSWORD=abcd1234
+
+# 创建数据库
+ENV MSSQL_DB=test
+
+# 将数据库文件复制到容器内
+# COPY sqlserver.mdf /mssql_data/database.mdf
+# COPY sqlserver_log.ldf /mssql_data/database_log.ldf
+
+# 对外暴露端口
+EXPOSE 1433
+# sqlcmd -S server_name -U username -P password -d database_name
+
+# docker pull mcr.microsoft.com/mssql/server:2019-latest
+
+# docker run --name mssql -e ACCEPT_EULA=Y -e MSSQL_SA_PASSWORD=sa.123456 -e MSSQL_DB=test -v mssql_data:/mssql_data -p 1433:1433 -d mcr.microsoft.com/mssql/server:2019-latest 
+
